@@ -186,6 +186,10 @@
         row.addEventListener("dragleave", handleDragLeave);
       });
 
+      itemsSection.addEventListener("dragover", handleDragOver);
+      itemsSection.addEventListener("drop", handleDrop);
+      itemsSection.addEventListener("dragleave", handleDragLeave);
+
       function handleDrop(event) {
         event.preventDefault();
         const { currentTarget, dataTransfer } = event;
