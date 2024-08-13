@@ -138,6 +138,11 @@
         object-fit: cover;
         background: #fff;
         cursor: grab;
+
+        &.drag-preview {
+          opacity: 0.5;
+          pointer-events: none;
+        }
       }
     </style>
 
@@ -205,15 +210,24 @@
         }
 
         currentTarget.classList.remove("drag-over");
+        currentTarget.querySelector(".drag-preview")?.remove();
       }
 
       function handleDragOver(event) {
         event.preventDefault();
 
-        const { currentTarget } = event;
+        const { currentTarget, dataTransfer } = event;
         if (sourceContainer === currentTarget) return;
 
         currentTarget.classList.add("drag-over");
+
+        const dragPreview = document.querySelector(".drag-preview");
+
+        if (draggedElement && !dragPreview) {
+          const previewElement = draggedElement.cloneNode(true);
+          previewElement.classList.add("drag-preview");
+          currentTarget.appendChild(previewElement);
+        }
       }
 
       function handleDragLeave(event) {
@@ -221,6 +235,7 @@
 
         const { currentTarget } = event;
         currentTarget.classList.remove("drag-over");
+        currentTarget.querySelector(".drag-preview")?.remove();
       }
 
       function handleDragStart(event) {
