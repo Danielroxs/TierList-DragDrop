@@ -152,6 +152,7 @@
 
       const imageInput = $("#image-input");
       const itemsSection = $("#selector-items");
+      const resetButton = $("#reset-tier-button");
 
       function createItem(src) {
         const imgElement = document.createElement("img");
@@ -166,18 +167,23 @@
         return imgElement;
       }
 
-      imageInput.addEventListener("change", (event) => {
-        const [file] = event.target.files;
+      function useFilesToCreateItems(files) {
+        if (files && files.length > 0) {
+          Array.from(files).forEach((file) => {
+            const reader = new FileReader();
 
-        if (file) {
-          const reader = new FileReader();
+            reader.onload = (eventReader) => {
+              createItem(eventReader.target.result);
+            };
 
-          reader.onload = (eventReader) => {
-            createItem(eventReader.target.result);
-          };
-
-          reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
+          });
         }
+      }
+
+      imageInput.addEventListener("change", (event) => {
+        const { files } = event.target;
+        useFilesToCreateItems(files);
       });
 
       let draggedElement = null;
@@ -248,6 +254,14 @@
         draggedElement = null;
         sourceContainer = null;
       }
+
+      resetButton.addEventListener("click", () => {
+        const items = $$(".tier .item-image");
+        items.forEach((item) => {
+          item.remove();
+          itemsSection.appendChild(item);
+        });
+      });
     </script>
   </head>
 
@@ -317,10 +331,16 @@
             <path d="M9 12h6" />
             <path d="M12 9v6" />
           </svg>
-          <input accept="image/*" id="image-input" type="file" hidden />
+          <input
+            multiple
+            accept="image/*"
+            id="image-input"
+            type="file"
+            hidden
+          />
         </label>
 
-        <button>
+        <button id="reset-tier-button">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
